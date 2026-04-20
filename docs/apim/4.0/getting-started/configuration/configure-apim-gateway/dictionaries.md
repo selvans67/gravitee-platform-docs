@@ -17,7 +17,7 @@ Dictionary properties are based on key-value pairs. You can create two types of 
 
 Dictionaries need to be deployed to the API Gateway before you can use them. You can see the date and time the dictionary was last deployed in the dictionary list:
 
-<figure><img src="../../../.gitbook/assets/image (46).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/gs-config-configure-apim-gateway-di-46.png" alt=""><figcaption></figcaption></figure>
 
 ### How are dictionaries used?
 
@@ -74,8 +74,8 @@ From here, you can select any properties you want to delete and/or select **Depl
 
 The following example creates a list of properties based on extracting the names and versions from the JSON at the defined URL and assigning them to the property keys and values:
 
-<figure><img src="https://docs.gravitee.io/images/apim/3.x/installation/configuration/configure-dict-dynamic-property-def.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/configure-dict-dynamic-property-def.png" alt=""><figcaption></figcaption></figure>
 
 When you select **Start**, the properties are added to the list according to the defined schedule:
 
-<figure><img src="https://docs.gravitee.io/images/apim/3.x/installation/configuration/configure-dict-dynamic-property-list.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../.gitbook/assets/configure-dict-dynamic-property-list.png" alt=""><figcaption></figcaption></figure>

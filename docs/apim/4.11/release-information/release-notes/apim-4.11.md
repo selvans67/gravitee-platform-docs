@@ -12,6 +12,7 @@
 * mTLS plan support for Kafka Native APIs authenticates clients via X.509 certificates with dynamic trust store updates.
 * Kafka Governance Rules policies enforce compliance standards on Produce, Fetch, CreateTopics, and AlterConfigs requests.
 * Kafka message encryption and decryption policy protects Kafka payloads at the gateway level using AES-GCM with JWE or DEK modes.
+* Groovy policy is now compatible with Native Kafka APIs, letting you apply custom Groovy scripts to Kafka message flows.
 * Native IP filtering policy for Kafka APIs controls client access using whitelist/blacklist rules with IPv4, IPv6, and CIDR support.
 * Multi-tenant endpoint support routes Kafka traffic to different backend clusters based on gateway tenant configuration.
 * Subscription forms let API publishers define custom forms that consumers complete when subscribing to plans.
@@ -28,6 +29,14 @@ V1 APIs have been deprecated since version 4.0.0 of API Management (APIM). From 
 The A2A proxy architecture introduces the `A2A_PROXY` API type. With this change, you must create your A2A Proxy APIs again to avoid any issues and to align with the new architecture.
 
 Existing A2A proxy APIs continue to work but they are no longer supported.
+
+#### **New Developer Portal APIs and documentation pages must be republished**
+
+When you upgrade to APIM 4.11, any APIs and documentation pages previously published to the New Developer Portal are no longer published. After the upgrade, add and publish your APIs and documentation pages again through the **Navigation items** section of the New Developer Portal settings.
+
+#### **New Developer Portal subscriptions require published API pages**
+
+After upgrading to APIM 4.11, an API accepts subscriptions through the New Developer Portal only after you publish the API's pages. To enable subscriptions to an API, publish the API's pages through the **Navigation items** section of the New Developer Portal settings.
 
 ## New Features
 
@@ -163,12 +172,40 @@ Existing A2A proxy APIs continue to work but they are no longer supported.
 * Processes entire message payloads or individual JSON fields identified by JSONPath expressions. Optional compression (GZIP, LZ4, BZIP2, Snappy) mitigates the storage overhead of encrypted data.
 * Keys are provisioned as base64-encoded values or stored in PKCS12 keystores, with support for Expression Language and the Gravitee secrets mechanism.
 
+#### **Groovy policy support for Native Kafka APIs**
+
+* The Groovy policy can now be applied to Native Kafka APIs, enabling custom Groovy scripting for complex logic on Kafka message flows.
+* Runs on the Interact, Publish, and Subscribe phases of Native Kafka flows, so scripts can inspect and transform Kafka records as they pass through the gateway.
+* Policy configuration, script syntax, and the Groovy whitelist are unchanged. Existing Groovy scripts are reused without modification.
+* Requires `gravitee-policy-groovy` 4.3.0 or later and APIM 4.11 with the Kafka Gateway.
+
 #### **AI Model Text Classification Resource**
 
 * Provides eight pre-trained models for detecting toxic content and prompt injection attacks in API traffic, supporting up to 15 languages.
 * Includes binary and multi-label toxicity detection models (2–16 labels) and two Llama Prompt Guard variants for identifying LLM prompt manipulation attempts.
 * Administrators select models based on accuracy requirements, resource constraints, and language coverage, with configurable classification thresholds per model type.
 * Models are sourced from HuggingFace repositories and require sufficient memory and compute resources (model sizes range from 4.39M to 100M+ parameters).
+
+
+<!-- PIPELINE:APIM-13343 -->
+#### **Checkbox group fields and dynamic options in subscription forms**
+
+* Subscription forms now support checkbox group fields that allow subscribers to select multiple options from a predefined or dynamically resolved list.
+* Options can be populated at runtime using Expression Language (EL) to reference API or environment metadata, with required fallback values for contexts where metadata is unavailable.
+* Checkbox groups enforce validation constraints including required selection (at least one option) and option list validation (all selected values must exist in allowed options).
+* Subscription forms support up to 25 fields total, with input fields limited to 256 characters and textarea fields limited to 1024 characters.
+* Form submissions are validated against all constraints before subscription creation, returning field-level error messages when validation fails.
+<!-- /PIPELINE:APIM-13343 -->
+
+<!-- PIPELINE:APIM-13342 -->
+#### **mTLS certificate management for applications**
+
+* Application owners can now upload, rotate, and retire client certificates for mutual TLS authentication directly from the new Developer Portal, without raising tickets to platform administrators.
+* Certificates support scheduled activation dates and grace-period rotation, so both the old and new certificate authenticate subscriptions during cut-over and traffic doesn't fail.
+* Administrators enable the feature per environment with the **Enable mTLS Certificate Management** toggle in the **New Developer Portal** section of **Portal** settings, which sets the `portal.next.mtls.enabled` parameter. The feature defaults to disabled and is only available with an Enterprise Edition license.
+* Application owners need `APPLICATION_DEFINITION[UPDATE]` on the application to view or manage certificates through the new Developer Portal. The Certificates section is rendered inside the application's edit form, so read-only access isn't enough.
+* Certificates are uploaded in PEM format. The portal file picker accepts `.pem`, `.crt`, and `.cer` files.
+<!-- /PIPELINE:APIM-13342 -->
 
 ## Improvements
 

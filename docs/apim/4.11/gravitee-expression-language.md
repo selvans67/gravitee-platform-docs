@@ -11,7 +11,7 @@ EL extends the Spring Expression Language (SpEL) by providing additional object 
 
 Custom properties and attributes have special meanings in the Gravitee ecosystem:
 
-* **Custom properties:** Defined at the API level and read-only during the Gateway's execution of an API transaction. Learn more about setting an API's custom properties in [link to custom properties documentation].
+* **Custom properties:** Defined at the API level and read-only during the Gateway's execution of an API transaction. Learn more about setting an API's custom properties in \[link to custom properties documentation].
 * **Attributes:** Scoped to the current API transaction and can be manipulated during the execution phase through the `assign-attributes` policy. Attributes attach additional information to a request or message via a variable that is dropped after the API transaction completes.
 {% endhint %}
 
@@ -133,7 +133,7 @@ Depending on the content-type, you can access specific content.
 {% hint style="warning" %}
 If a JSON payload has duplicate keys, APIM keeps the last key.
 
-To avoid errors caused by duplicate keys, apply the JSON threat protection policy to the API. For more information about the JSON threat protection policy, see [json-threat-protection](create-and-configure-apis/apply-policies/policy-reference/json-threat-protection "mention").
+To avoid errors caused by duplicate keys, apply the JSON threat protection policy to the API. For more information about the JSON threat protection policy, see [json-threat-protection](create-and-configure-apis/apply-policies/policy-reference/json-threat-protection/ "mention").
 {% endhint %}
 
 You can access specific attributes of a JSON request/response payload with `{#request.jsonContent.foo.bar}`, where the request body is similar to the following example:
@@ -157,6 +157,61 @@ You can access specific tags of an XML request/response payload with `{#request.
 ```
 {% endtab %}
 {% endtabs %}
+
+
+
+## EL syntax and evaluation rules
+
+Gravitee EL wraps Spring Expression Language (SpEL) with a template parser that recognizes three expression markers inside strings. Everything outside a marker is treated as literal text.
+
+#### Expression markers
+
+The EL template parser recognizes three markers, with optional whitespace allowed after the opening `{`:
+
+* `{#...}` — evaluates a SpEL expression. This is the canonical EL marker.
+* `{(...)}` — evaluates a parenthesized SpEL expression. Useful for inline evaluation inside a larger string.
+* `{T(...)}` — evaluates a SpEL type reference, for example `{T(java.lang.String).format(...)}`.
+
+Any `{...}` block that doesn't start with `#`, `(`, or `T` is left untouched and returned as literal text.
+
+#### Condition fields
+
+Gateway condition fields (for example, policy conditions and flow conditions) are evaluated by the gateway as a Boolean. The Gateway passes the raw field value to the template engine with `Boolean.class` as the target type. The template engine returns a Boolean, which the gateway uses to decide whether the condition matches.
+
+If evaluation throws an `ExpressionEvaluationException`, the gateway logs a warning, raises an `EXPRESSION_EVALUATION_ERROR` execution warning, and treats the condition as non-matching (the element is filtered out).
+
+#### Verified evaluation examples
+
+The following examples reflect the behavior shipped with the Gateway:
+
+<table><thead><tr><th width="260">Input</th><th width="220">Target type</th><th>Result</th></tr></thead><tbody><tr><td><code>true</code></td><td><code>Boolean</code></td><td><code>true</code></td></tr><tr><td><code>{#request.headers['X-Gravitee-Endpoint'] == null}</code></td><td><code>Boolean</code></td><td>Boolean result of the comparison</td></tr><tr><td><code>{#request.content.startsWith('pong')}</code></td><td><code>Boolean</code></td><td>Boolean result of the comparison</td></tr><tr><td><code>{1 == 1}</code></td><td><code>String</code></td><td>Literal <code>{1 == 1}</code> (not evaluated — no EL marker)</td></tr><tr><td><code>{(1 == 1)}</code></td><td><code>String</code></td><td><code>true</code></td></tr><tr><td><code>{(12 == 1)}</code></td><td><code>String</code></td><td><code>false</code></td></tr></tbody></table>
+
+{% hint style="info" %}
+The EL template parser only treats a `{...}` block as an expression if the first non-whitespace character inside is #, (, or T. A bare input like 1==1 or true written without any marker is returned as literal text by the template engine. For a Boolean condition field, wrap the comparison in an EL marker, for example `{#request.headers['X-Debug'] != null}` so the gateway evaluates it.
+{% endhint %}
+
+### EL versus Apache FreeMarker
+
+Gravitee uses two different template languages in different places. They aren't interchangeable.
+
+#### Where EL is used
+
+EL is used in Gateway execution paths, including:
+
+* Policy and flow condition fields.
+* Any field documented as supporting EL.
+
+EL expressions use `{#...}`, `{(...)}`, or `{T(...)}` markers.
+
+#### Where FreeMarker is used
+
+Gravitee notifiers render their configuration payloads (for example, the webhook notifier body) through Apache FreeMarker. The notifier base class builds a FreeMarker `Template` from the configured payload and processes it against a parameters map before dispatching the notification.
+
+FreeMarker uses `${...}` placeholders and its own directive syntax, which is different from EL. For FreeMarker syntax, see the [Apache FreeMarker documentation](https://freemarker.apache.org/docs/index.html).
+
+{% hint style="warning" %}
+The notifier body is processed by FreeMarker, not the EL template engine. The EL parser doesn't recognize `${...}` as an expression marker, so FreeMarker syntax in a Gateway condition field is treated as literal text. Use the language that matches the field.
+{% endhint %}
 
 ## Expression Language Assistant
 
@@ -213,13 +268,10 @@ The EL Assistant is available in any field that supports Expression Language.
 1.  In the field that supports Expression Language, click the **{EL}** icon.
 
     <figure><img src="https://128066588-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FbGmDEarvnV52XdcOiV8o%2Fuploads%2Fgit-blob-008c4fc76a06b5570f9af67bb2cfc51457ab629f%2F304A887B-9FD1-4011-961A-7DB7D91D3478_1_201_a.jpeg?alt=media" alt=""><figcaption></figcaption></figure>
-
 2. In the **EL Assistant** pop-up window, enter a natural language prompt describing the Expression Language you need. For example: "Only run this policy if the header equals test."
-
 3.  Click **Ask Newt AI**. The Assistant generates the corresponding Expression Language.
 
     <figure><img src="https://128066588-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FbGmDEarvnV52XdcOiV8o%2Fuploads%2Fgit-blob-7d9c2dbfbfb15a07488aef31b1f2ff476bc84c4c%2FDBE0A0C1-3171-4CA4-A586-A503EBD2B0BD_1_201_a.jpeg?alt=media" alt=""><figcaption></figcaption></figure>
-
 4.  (Optional) Provide feedback by clicking the **thumbs up** or **thumbs down** icon.
 
     <figure><img src="https://128066588-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FbGmDEarvnV52XdcOiV8o%2Fuploads%2Fgit-blob-fdfd3541a28f3f38863088cd442a5d75838cbcc3%2F6D6E46F0-AECF-41F9-BE38-53C6EC0EDA38_1_201_a.jpeg?alt=media" alt=""><figcaption></figcaption></figure>
@@ -267,6 +319,12 @@ The EL Assistant returns:
 ## APIs
 
 Use the Gravitee Expression Language (EL) to access API transaction information through root-level objects injected into the EL context: custom properties, dictionaries, and endpoints.
+
+### API object properties
+
+The `{#api}` root-level object exposes metadata about the Gateway API handling the current transaction.
+
+<table><thead><tr><th width="172">Object property</th><th width="260">Description</th><th width="108">Type</th><th>Example</th></tr></thead><tbody><tr><td>id</td><td>Gateway API identifier</td><td>string</td><td><code>{#api.id}</code></td></tr><tr><td>name</td><td>Gateway API name</td><td>string</td><td><code>{#api.name}</code></td></tr><tr><td>version</td><td>Gateway API version, as declared on the API definition</td><td>string</td><td><code>{#api.version}</code></td></tr><tr><td>properties</td><td>Custom properties defined on the API. See the Custom properties tab below for details</td><td>key / value</td><td><code>{#api.properties['my-property']}</code></td></tr></tbody></table>
 
 {% tabs %}
 {% tab title="Custom properties" %}
@@ -326,18 +384,26 @@ When APIM Gateway handles an incoming API request, some object properties are au
 
 Some policies (e.g., the OAuth2 policy) register other attributes in the request context. For more information, refer to the documentation for individual policies.
 
-Request context attributes and examples are listed below.
+Request context attributes and examples are listed below:&#x20;
 
 {% tabs %}
 {% tab title="Table" %}
-<table><thead><tr><th width="170">Object property</th><th width="190">Description</th><th width="104">Type</th><th>Nullable</th></tr></thead><tbody><tr><td>api</td><td>Called API</td><td>string</td><td>-</td></tr><tr><td>api-key</td><td>The API key used (for an API Key plan)</td><td>string</td><td>X (for no API Key plan)</td></tr><tr><td>application</td><td>The authenticated application making incoming HTTP requests</td><td>string</td><td>X (for Keyless plan)</td></tr><tr><td>context-path</td><td>Context path</td><td>string</td><td>-</td></tr><tr><td>plan</td><td>Plan used to manage incoming HTTP requests</td><td>string</td><td>-</td></tr><tr><td>resolved-path</td><td>The path defined in policies</td><td>string</td><td>-</td></tr><tr><td>user-id</td><td><p>The user identifier of an incoming HTTP request:</p><p>* The subscription ID for an API Key plan</p><p>* The remote IP for a Keyless plan</p></td><td>string</td><td>-</td></tr></tbody></table>
+<table><thead><tr><th width="190">Attribute key</th><th width="320">Description</th><th width="104">Type</th><th>Set by</th></tr></thead><tbody><tr><td>api</td><td>ID of the API handling the request</td><td>string</td><td>Gateway (always)</td></tr><tr><td>api.name</td><td>Name of the API handling the request</td><td>string</td><td>Gateway (always)</td></tr><tr><td>api.deployed-at</td><td>Timestamp of the last API deployment</td><td>long</td><td>Gateway (always)</td></tr><tr><td>api-key</td><td>The API key used by the consumer</td><td>string</td><td>API Key policy (only on API Key plans)</td></tr><tr><td>application</td><td>ID of the authenticated application</td><td>string</td><td>Security chain (empty for Keyless plans)</td></tr><tr><td>apiProduct</td><td>ID of the API Product associated with the current subscription</td><td>string</td><td>Subscription processor (only when the subscription belongs to an API Product)</td></tr><tr><td>plan</td><td>ID of the plan the consumer is subscribed to</td><td>string</td><td>Security chain</td></tr><tr><td>user</td><td>Authenticated user identifier</td><td>string</td><td>Security chain</td></tr><tr><td>user.roles</td><td>Roles granted to the authenticated user</td><td>list / array</td><td>Security chain</td></tr><tr><td>user-id</td><td>The user identifier of the incoming HTTP request. The subscription ID for an API Key plan, the remote IP for a Keyless plan</td><td>string</td><td>Gateway (always)</td></tr><tr><td>clientIdentifier</td><td>Stable client identifier used for rate limiting and logging. Derived from the subscription ID, a header, or the remote address</td><td>string</td><td>Subscription processor (always)</td></tr><tr><td>organization</td><td>ID of the organization the API belongs to</td><td>string</td><td>Gateway (always)</td></tr><tr><td>environment</td><td>ID of the environment the API is deployed in</td><td>string</td><td>Gateway (always)</td></tr><tr><td>context-path</td><td>Context path configured on the API listener</td><td>string</td><td>Gateway (always)</td></tr><tr><td>resolved-path</td><td>Path resolved from the flow selectors — the path defined in policies</td><td>string</td><td>Flow chain</td></tr><tr><td>mapped-path</td><td>Path mapping matched for analytics and logging</td><td>string</td><td>Gateway (always)</td></tr><tr><td>request.method</td><td>HTTP method of the current request</td><td>string</td><td>Gateway (always)</td></tr><tr><td>request.endpoint</td><td>Endpoint URI selected for the current request</td><td>string</td><td>Gateway (always)</td></tr><tr><td>request.endpoint.override</td><td>Endpoint URI explicitly overridden for the current request (for example, by the Dynamic Routing policy)</td><td>string</td><td>Dynamic routing / assign-attributes (only when overridden)</td></tr><tr><td>request.original-url</td><td>Full URL of the original request received by the Gateway, including scheme, host, and path</td><td>string</td><td>Gateway (always)</td></tr><tr><td>quota.count</td><td>Current value of the quota counter for the active subscription</td><td>long</td><td>Quota policy (only when a Quota policy is applied)</td></tr><tr><td>quota.limit</td><td>Configured quota limit</td><td>long</td><td>Quota policy (only when a Quota policy is applied)</td></tr><tr><td>quota.remaining</td><td>Remaining quota for the active subscription</td><td>long</td><td>Quota policy (only when a Quota policy is applied)</td></tr><tr><td>quota.reset.time</td><td>Timestamp at which the quota counter resets</td><td>long</td><td>Quota policy (only when a Quota policy is applied)</td></tr><tr><td>sni</td><td>Server Name Indication value from the TLS handshake</td><td>string</td><td>Gateway (only when TLS SNI is used)</td></tr></tbody></table>
 {% endtab %}
 
 {% tab title="Examples" %}
 * Get the value of the `user-id` attribute for an incoming HTTP request: `{#context.attributes['user-id']}`
 * Get the value of the `plan` attribute for an incoming HTTP request: `{#context.attributes['plan']}`
+* Get the authenticated application ID: `{#context.attributes['application']}`
+* Get the stable client identifier: `{#context.attributes['clientIdentifier']}`
 {% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+**Attribute keys without the `gravitee.attribute.` prefix**
+
+&#x20;The Gateway stores context attributes with a `gravitee.attribute.` prefix (for example, `gravitee.attribute.plan`). Expression Language lookups through `{#context.attributes['...']}` accept either the short key or the fully prefixed key. Use the short keys shown in the table above for readability.
+{% endhint %}
 
 ### SSL object properties
 
@@ -425,6 +491,92 @@ The EL (Expression Language) used for a message does not change based on phase. 
 * Get the size of a message: `{#message.contentLength}`
 {% endtab %}
 {% endtabs %}
+
+### Kafka Gateway
+
+The Kafka Gateway uses a distinct set of Expression Language root objects that reflect Kafka protocol concepts rather than HTTP concepts. Use this section when configuring EL on Kafka APIs — for example, in endpoint configuration, policy conditions, or connection interruption rules.
+
+{% hint style="warning" %}
+The `#request`, `#response`, and `#message` objects on Kafka APIs expose different properties than the HTTP versions. HTTP-specific properties such as `#request.method`, `#request.headers`, or `#request.path` aren't available on Kafka APIs.
+{% endhint %}
+
+#### EL availability by phase
+
+The set of root objects available to an EL expression depends on the execution phase. Kafka APIs run through four distinct phases, each exposing a different variable surface.
+
+<table><thead><tr><th width="200">Phase</th><th width="210">When it runs</th><th>Available root objects</th></tr></thead><tbody><tr><td>Entrypoint Connect</td><td>Before the Kafka client authenticates</td><td><code>#connection</code>, <code>#ssl</code>, <code>#context</code> (attributes and addresses only — no <code>principal</code>)</td></tr><tr><td>Connection</td><td>After the client authenticates, once per connection</td><td><code>#context</code> (with <code>principal</code> and <code>ssl</code>)</td></tr><tr><td>Request</td><td>Per Kafka protocol request (Produce, Fetch, Metadata, and others)</td><td><code>#request</code>, <code>#response</code>, <code>#context</code></td></tr><tr><td>Message</td><td>Per Kafka record, for message-level policies</td><td><code>#message</code>, plus everything available in the Request phase</td></tr></tbody></table>
+
+#### Kafka context object properties
+
+The `#context` root object on a Kafka API exposes connection-level and authentication data for the current client connection.
+
+<table><thead><tr><th width="172">Object property</th><th width="260">Description</th><th width="120">Type</th><th>Example</th></tr></thead><tbody><tr><td>attributes</td><td>Context attributes associated with the Kafka connection</td><td>key / value</td><td><code>{#context.attributes['plan']}</code></td></tr><tr><td>remoteAddress</td><td>Remote address of the Kafka client</td><td>string</td><td><code>{#context.remoteAddress}</code></td></tr><tr><td>localAddress</td><td>Local address of the gateway listener</td><td>string</td><td><code>{#context.localAddress}</code></td></tr><tr><td>ssl</td><td>TLS session information for the client connection</td><td>SSL object</td><td><code>{#context.ssl.clientHost}</code></td></tr><tr><td>principal</td><td>Authenticated Kafka principal for the current connection</td><td>Principal object</td><td><code>{#context.principal.name}</code></td></tr></tbody></table>
+
+**Kafka principal object properties**
+
+The `#context.principal` object exposes the authenticated Kafka client identity.
+
+<table><thead><tr><th width="172">Object property</th><th width="300">Description</th><th width="100">Type</th><th>Nullable</th></tr></thead><tbody><tr><td>name</td><td>The principal name as seen by the Kafka broker (for example, the SASL username or the certificate common name)</td><td>string</td><td>Yes — returns <code>null</code> when no principal is set</td></tr><tr><td>token</td><td>The raw bearer token presented by the client</td><td>string</td><td>Yes — populated only when the client authenticates with SASL OAUTHBEARER. Returns <code>null</code> for all other authentication methods, including PLAINTEXT, mTLS, SASL PLAIN, SASL SCRAM, and API Key plans</td></tr></tbody></table>
+
+**Pass the client's OAuth token to the broker**
+
+When a Kafka API is secured with SASL OAUTHBEARER and the gateway forwards the client's bearer token to the upstream Kafka broker, configure the endpoint's bearer token field as follows:
+
+```
+{#context.principal.token}
+```
+
+The gateway extracts the token from the authenticated client connection and reuses it when authenticating to the broker.
+
+#### Kafka request object properties
+
+The `#request` root object on a Kafka API exposes Kafka protocol-level metadata for the current operation. It's only available in the Request phase.
+
+<table><thead><tr><th width="172">Object property</th><th width="260">Description</th><th width="108">Type</th><th>Example</th></tr></thead><tbody><tr><td>correlationId</td><td>Correlation ID of the Kafka request, returned as a string</td><td>string</td><td><code>12345</code></td></tr><tr><td>apiKey</td><td>Name of the Kafka protocol operation</td><td>string</td><td><code>PRODUCE</code>, <code>FETCH</code>, <code>METADATA</code></td></tr><tr><td>apiVersion</td><td>Version of the Kafka protocol operation</td><td>int</td><td><code>10</code></td></tr><tr><td>clientId</td><td>Client ID sent by the Kafka client in the request header</td><td>string</td><td><code>my-kafka-producer</code></td></tr></tbody></table>
+
+{% hint style="warning" %}
+**`#request.apiKey` isn't the Gravitee API Key plan.** On Kafka APIs, `#request.apiKey` returns the Kafka protocol operation name (for example, `PRODUCE` or `FETCH`). To read the API key value used by a Gravitee API Key plan, use `{#context.attributes['api-key']}` instead.
+{% endhint %}
+
+#### Kafka response object properties
+
+The `#response` root object is registered for Kafka APIs but doesn't currently expose any properties. Don't rely on `#response.*` expressions on Kafka APIs.
+
+#### Kafka message object properties
+
+For policies that run on individual Kafka records — for example, the Kafka Message Filtering policy — the `#message` root object exposes record-level data.
+
+<table><thead><tr><th width="172">Object property</th><th width="260">Description</th><th width="108">Type</th><th>Example</th></tr></thead><tbody><tr><td>topic</td><td>Name of the Kafka topic the record belongs to</td><td>string</td><td><code>orders</code></td></tr><tr><td>key</td><td>Record key, as a string</td><td>string</td><td><code>customer-42</code></td></tr><tr><td>content</td><td>Record value body, as a string</td><td>string</td><td><code>{"total":100}</code></td></tr><tr><td>contentLength</td><td>Length of the record value body</td><td>int</td><td><code>14</code></td></tr><tr><td>headersString</td><td>Record headers with values decoded as strings</td><td>key / value</td><td><code>{#message.headersString['trace-id']}</code></td></tr><tr><td>headersRaw</td><td>Record headers with raw byte-array values</td><td>key / value</td><td>-</td></tr><tr><td>metadata</td><td>Metadata attached to the message by the gateway</td><td>key / value</td><td><code>{#message.metadata['partition']}</code></td></tr><tr><td>error</td><td>Flag indicating whether the record is in an error state</td><td>boolean</td><td><code>false</code></td></tr></tbody></table>
+
+#### Entrypoint Connect phase context
+
+At the Entrypoint Connect phase — policies that run before the Kafka client authenticates, such as connection interruption rules — the EL context is intentionally reduced. Only connection-level data is available.
+
+<table><thead><tr><th width="200">Root object</th><th width="200">Property</th><th>Description</th></tr></thead><tbody><tr><td><code>#connection</code></td><td>id</td><td>Stable identifier for the client connection</td></tr><tr><td><code>#connection</code></td><td>remoteAddress</td><td>Address of the Kafka client</td></tr><tr><td><code>#connection</code></td><td>localAddress</td><td>Address of the gateway listener</td></tr><tr><td><code>#ssl</code></td><td>(SSL object)</td><td>TLS session for the client connection, if SSL is configured</td></tr><tr><td><code>#context</code></td><td>attributes</td><td>Context attributes set before authentication</td></tr><tr><td><code>#context</code></td><td>remoteAddress</td><td>Remote address of the Kafka client</td></tr><tr><td><code>#context</code></td><td>localAddress</td><td>Local address of the gateway listener</td></tr></tbody></table>
+
+{% hint style="warning" %}
+`#context.principal`, `#request`, `#response`, and `#message` aren't available in the Entrypoint Connect phase because authentication hasn't occurred and no Kafka protocol request has been received yet. Referencing them in an EL expression evaluated at this phase returns `null` or raises an evaluation error.
+{% endhint %}
+
+
+
+### Subscription
+
+The `{#subscription}` root-level object exposes information about the consumer subscription that authenticated the current API transaction. It's available once the security chain has resolved a subscription in practice, from the Request phase onward for every non-Keyless plan.
+
+<table><thead><tr><th width="180">Object property</th><th width="320">Description</th><th width="108">Type</th><th>Example</th></tr></thead><tbody><tr><td>id</td><td>Subscription identifier</td><td>string</td><td><code>{#subscription.id}</code></td></tr><tr><td>type</td><td>Subscription type. One of <code>STANDARD</code> or <code>PUSH</code></td><td>string</td><td><code>{#subscription.type}</code></td></tr><tr><td>applicationName</td><td>Name of the application that owns the subscription</td><td>string</td><td><code>{#subscription.applicationName}</code></td></tr><tr><td>clientId</td><td>OAuth2 client ID associated with the subscription, if the plan uses one</td><td>string</td><td><code>{#subscription.clientId}</code></td></tr><tr><td>apiProductId</td><td>Identifier of the API Product associated with the subscription, if the subscription was created through an API Product</td><td>string</td><td><code>{#subscription.apiProductId}</code></td></tr><tr><td>metadata</td><td>Key / value metadata attached to the subscription by the API publisher</td><td>key / value</td><td><code>{#subscription.metadata['clientType']}</code></td></tr></tbody></table>
+
+{% hint style="info" %}
+**Referencing the authenticated application from EL**
+
+To reference the application that owns the current subscription, use `{#subscription.applicationName}` for the application name or `{#context.attributes['application']}` for the application ID. There's no dedicated `#application` root-level object.
+{% endhint %}
+
+**Examples**
+
+* Route based on the subscribing application: `{#subscription.applicationName == 'partner-portal'}`
+* Compare a subscription metadata value to a literal string: `{#subscription.metadata['clientType'].equals('PARTNER')}`
+* Forward the subscription ID to the upstream as a header: `{#subscription.id}`
 
 ## Nodes
 

@@ -52,7 +52,7 @@ In order to limit the scope of the roles, scopes are bound to what we call an `a
 * `DOMAIN` — role for a security domain
 * `APPLICATION` — role for an application
 
-<figure><img src="../.gitbook/assets/image (158).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-158 (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Role
 
@@ -234,13 +234,13 @@ To manage roles and permissions:
 
 Let’s imagine we want to create a reviewer role, which allows a user to check if your application configuration is valid.
 
-1.  Click the plus icon ![plus icon](https://docs.gravitee.io/images/icons/plus-icon.png) and enter the following values:
+1.  Click the plus icon ![plus icon](../.gitbook/assets/plus-icon.png) and enter the following values:
 
     * Assignable type : `APPLICATION`
     * Name : `REVIEWER_APPLICATION`
     * Description : `Read-only role`
 
-    <figure><img src="../.gitbook/assets/image (159).png" alt=""><figcaption></figcaption></figure>
+    <figure><img src="../.gitbook/assets/guide-admin-159 (1).png" alt=""><figcaption></figcaption></figure>
 2. Click **CREATE**.
 
 ### Configure the `REVIEWER_APPLICATION` role
@@ -249,19 +249,19 @@ You must give `READ` permissions to all sections of your application. This allow
 
 Click **SAVE** to store the changes.
 
-<figure><img src="../.gitbook/assets/image (160).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-160 (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Result
 
 Go to your applications' **Administrative roles** settings section and add a new member with the `REVIEWER_APPLICATION` role. The user `Reviewer User` now has read access to your application.
 
-<figure><img src="../.gitbook/assets/image (161).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-161 (1).png" alt=""><figcaption></figcaption></figure>
 
 ## Users
 
 When users log in to AM Console, they are listed in the **Users** section of the domains' **Settings** menu.
 
-<figure><img src="../.gitbook/assets/image (162).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-162 (1).png" alt=""><figcaption></figcaption></figure>
 
 If you select a user, you have access to detailed account information and will be able to manage the user’s permissions and groups via with the **Administrative roles** and **Groups** sections.
 
@@ -276,20 +276,20 @@ In the example below, we will create a `FOO Team` group where you can put all me
 1. Log in to AM Console.
 2. From the user menu at the top right, select **Global settings**.
 3. Click **Settings > Groups**.
-4. Click the plus icon ![plus icon](https://docs.gravitee.io/images/icons/plus-icon.png).
+4. Click the plus icon ![plus icon](../.gitbook/assets/plus-icon.png).
 5. Enter the details of the group.
 
-<figure><img src="../.gitbook/assets/image (163).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-163 (1).png" alt=""><figcaption></figcaption></figure>
 
 6. Click **CREATE**.
 
 ### Configure group members
 
-1. Click the settings icon ![settings icon](https://docs.gravitee.io/images/icons/settings-icon.png) next to the `FOO Team` group.
+1. Click the settings icon ![settings icon](../.gitbook/assets/settings-icon.png) next to the `FOO Team` group.
 2. Click the **Members** tab.
 3. Add a user by clicking **+ Add members**.
 
-<figure><img src="../.gitbook/assets/image (164).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-admin-164 (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Add the group to an application
 

@@ -8,7 +8,7 @@ You can authenticate users in AM using your own MongoDB database.
 
 1. Log in to AM Console.
 2. Click **Settings > Providers**.
-3. Click the plus icon ![plus icon](https://docs.gravitee.io/images/icons/plus-icon.png).
+3. Click the plus icon ![plus icon](../../../.gitbook/assets/plus-icon.png).
 4. Select **MongoDB** as your identity provider type and click **Next**.
 5. Give your identity provider a name.
 6. Configure the settings.
@@ -69,7 +69,7 @@ DATASOURCES_MONGODB_1_SETTINGS_PORT=27017
 
 Once the `datasources` section is configured on the gravitee.yaml and the Management API has been restarted to take it into account, then `Data source ID` field will become editable to select a configuration.
 
-<figure><img src="../../../../4.10/.gitbook/assets/image (19).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../../../4.10/.gitbook/assets/guide-identity-providers-database-i-19.png" alt=""><figcaption></figcaption></figure>
 
 ### Connection Precedence
 

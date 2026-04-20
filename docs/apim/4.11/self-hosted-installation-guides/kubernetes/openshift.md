@@ -40,6 +40,10 @@ The configuration types for OpenShift are the same configuration types for Kuber
 
 ### Configure the databases
 
+{% hint style="info" %}
+You can use other databases to store configuration management data (see [JDBC repositories](../../prepare-a-production-environment/repositories/)).
+{% endhint %}
+
 To deploy OpenShift, you must configure the MongoDB database. Also, you can configure PostgreSQL, ElasticSearch, and Redis if you need them.
 
 {% tabs %}
@@ -529,6 +533,12 @@ To install the Gravitee Helm Chart, complete the following steps:
 {% hint style="info" %}
 `values.yaml` is the file that you prepared in the [#configure-the-gravitee-parameters-and-values.yml-file](openshift.md#configure-the-gravitee-parameters-and-values.yml-file "mention") section.
 {% endhint %}
+
+## Configure a JDBC database (optional)
+
+By default, this guide installs MongoDB as the Configuration Database. To use a JDBC database instead, configure `jdbc.driverSource` in your Helm values. The supported modes are `auto`, `download`, `image`, and `preinstalled` (Helm chart 4.11.2+, which uses a driver already baked into your custom API and Gateway runtime images).
+
+For full details on each mode and per-database `values.yml` examples, see [JDBC repositories](../../prepare-a-production-environment/repositories/jdbc.md).
 
 ## Proxy configuration
 

@@ -128,7 +128,7 @@ Redis
 DocumentDB
 R2DBC
 RDBMS
-JDBC
+[Jj][Dd][Bb][Cc]
 [Dd]atastore
 Liquibase
 
@@ -410,6 +410,9 @@ Moby
 Amazon
 Azure
 Slackbot
+Anypoint
+Apigee
+MuleSoft
 
 # ============================================
 # Kubernetes Tooling

@@ -425,6 +425,10 @@ This guide requires MongoDB and Elasticsearch to be installed for the complete A
 
 ### Install MongoDB
 
+{% hint style="info" %}
+You can use other databases to store configuration management data (see [JDBC repositories](../../prepare-a-production-environment/repositories/)).
+{% endhint %}
+
 To support API definitions and configuration, you must install MongoDB into your Kubernetes cluster. For more information about installing MongoDB, see the [official chart documentation](https://artifacthub.io/packages/helm/bitnami/mongodb)
 
 1.  Install MongoDB with Helm using the following command:
@@ -1013,6 +1017,12 @@ To uninstall Gravitee APIM, use the following command:
 ```bash
 helm uninstall gravitee-apim --namespace gravitee-apim
 ```
+
+## Configure a JDBC database (optional)
+
+By default, this guide installs MongoDB as the Configuration Database. To use a JDBC database instead, configure `jdbc.driverSource` in your Helm values. The supported modes are `auto`, `download`, `image`, and `preinstalled` (Helm chart 4.11.2+, which uses a driver already baked into your custom API and Gateway runtime images).
+
+For full details on each mode and per-database `values.yml` examples, see [JDBC repositories](../../prepare-a-production-environment/repositories/jdbc.md).
 
 ## Verification
 

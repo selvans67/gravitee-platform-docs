@@ -18,9 +18,9 @@ Single Sign On allows you to set up an identity trust federation with your organ
 
 Once the end user chooses to sign in to Cockpit with SSO, they will be asked to provide their organization email. This email is used to redirect the user to your chosen authentication method to either sign in or bypass sign in via SSO if the user is already authenticated.
 
-<figure><img src="../.gitbook/assets/image (2) (1) (1) (1) (1) (1) (1).png" alt="" width="375"><figcaption><p>Single Sign On users should select "Sign in with your company SSO"</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/guides-configure-sso-2-1-1-1-1-1-1.png" alt="" width="375"><figcaption><p>Single Sign On users should select "Sign in with your company SSO"</p></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (3) (1) (1) (1) (1) (1) (1).png" alt="" width="375"><figcaption><p>User email redirects to your organization's IdP</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/guides-configure-sso-3-1-1-1-1-1-1.png" alt="" width="375"><figcaption><p>User email redirects to your organization's IdP</p></figcaption></figure>
 
 ## How to configure
 
@@ -35,11 +35,11 @@ It is recommended that the Account Primary Owner be a non-SSO user so that the C
 
 7. Click **Create Redirect URI**
 
-<figure><img src="../.gitbook/assets/image (9).png" alt=""><figcaption><p>Consent to enabling OpenID, Profile and Email scopes in your OAuth client</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-configure-sso-9.png" alt=""><figcaption><p>Consent to enabling OpenID, Profile and Email scopes in your OAuth client</p></figcaption></figure>
 
 1.  The next screen presents the generated redirect URI. This is the endpoint that your IdP will send users back from once they have successfully authenticated. Copy this value and update the redirect URI on the OAuth client in your IdP.
 
-    <figure><img src="../.gitbook/assets/image (10).png" alt=""><figcaption><p>Generated redirect URI to update your IdP OAuth client</p></figcaption></figure>
+    <figure><img src="../.gitbook/assets/guide-configure-sso-10.png" alt=""><figcaption><p>Generated redirect URI to update your IdP OAuth client</p></figcaption></figure>
 
 {% hint style="success" %}
 Your users can now sign in to Cockpit with SSO!
@@ -47,4 +47,4 @@ Your users can now sign in to Cockpit with SSO!
 
 The Single Sign On screen will display an Identity Provider that has been created and enabled
 
-<figure><img src="../.gitbook/assets/image (13).png" alt=""><figcaption><p>Single Sign On with an identity provider successfully created</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/guide-configure-sso-13.png" alt=""><figcaption><p>Single Sign On with an identity provider successfully created</p></figcaption></figure>

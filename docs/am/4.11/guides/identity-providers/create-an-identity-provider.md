@@ -22,15 +22,15 @@ In this example, we are creating an inline identity provider.
 
 1. Log in to AM Console.
 2. Click **Settings > Providers**.
-3. In the Providers page, click the plus icon ![plus icon](https://docs.gravitee.io/images/icons/plus-icon.png).
+3. In the Providers page, click the plus icon ![plus icon](../../.gitbook/assets/plus-icon.png).
 4. Choose an **Inline** identity provider type and click **Next**.
 
-<figure><img src="../../.gitbook/assets/image (61).png" alt=""><figcaption><p>Select an Identity Provider to add</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/guide-identity-providers-create-an--61 (1).png" alt=""><figcaption><p>Select an Identity Provider to add</p></figcaption></figure>
 
 5. Give your identity provider a **Name**.
 6. Add as many users as required, by clicking **Add User** for each new user, then click **Create**.
 
-<figure><img src="../../.gitbook/assets/image (62).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/guide-identity-providers-create-an--62 (1).png" alt=""><figcaption></figcaption></figure>
 
 {% code overflow="wrap" %}
 ```sh
@@ -49,7 +49,7 @@ curl -H "Authorization: Bearer :accessToken" \
 
 ## Custom identity provider
 
-<figure><img src="https://docs.gravitee.io/images/am/current/graviteeio-am-userguide-custom-idp.png" alt=""><figcaption><p>Custom IdP overview</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/graviteeio-am-userguide-custom-idp.png" alt=""><figcaption><p>Custom IdP overview</p></figcaption></figure>
 
 AM is designed to be extended based on a pluggable module architecture. You can develop your own identity provider using a _plugin_, and provide an authentication method to register your users so they can use AM.
 
